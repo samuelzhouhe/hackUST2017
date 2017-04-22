@@ -1,0 +1,70 @@
+{
+  "deliver_request" : {
+    "idr1" : {
+      "sender" : "idu1",
+      "receiver": "idu2",
+      "source": [114.1728365, 22.2805765],
+      "dest": [114.1748355, 22.2605769],
+      "pack_size": [0.1, 0.1, 0.2],
+      "pack_weight": 0.5,
+      "est_time": 45,
+      "status": "accepted"
+    }
+  },
+  "driver" : {
+    "idd1" : {
+      "name" : "Lucen",
+      "plate":"98SDF2",
+      "longative":114.1728365,
+      "legative":22.2805765
+    },
+    "idd2" : {
+      "name" : "transporter",
+      "plate":"D82J9E",
+      "longative":114.1777732,
+      "legative":22.3048594
+    }
+  },
+  "order_delivery" : {
+    "ido1" : {
+      "driver" : "idd1",
+      "sender": "idu1",
+      "receiver": "idu2",
+      "source": [114.1728365, 22.2805765],
+      "dest": [114.1748355, 22.2605769],
+      "status": "deliving",
+      "pack_size": [0.1, 0.1, 0.2],
+      "pack_weight": 0.5,
+      "base_price": 50,
+      "overtime_fine": null
+    }
+  },
+  "order_passenger" : {
+    "ido1" : {
+      "driver" : "idd1",
+      "paseenger": "idu3",
+      "source": [114.1728365, 22.2805765],
+      "dest": [114.1748355, 22.2605769],
+      "status": "arrived",
+      "price": 72.5,
+      "agree_taking_package": true
+    }
+  },
+  "user" : {
+    "idd1" : {
+      "name" : "Lucen"
+    },
+    "idd2" : {
+      "name" : "transporter"
+    },
+    "idu1" : {
+      "name":"Lynn"
+    }, 
+    "idu2": {
+      "name":"samuel"
+    },
+    "idu3": {
+      "name":"passenger"
+    }
+  }
+}

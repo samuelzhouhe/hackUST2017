@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-<script src="driver.js"></script>
+<script src="js/driver.js"></script>
 <script src="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.js"></script>
 <script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
 <script>
@@ -31,6 +31,20 @@
 </head>
 
 <body ng-app="driverApp" ng-controller="driverAppController">
+
+<script src="https://www.gstatic.com/firebasejs/3.8.0/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyA_lEsYM-vck40-A7g0wjSxVKerpLOWfZQ",
+    authDomain: "hackust2017-47009.firebaseapp.com",
+    databaseURL: "https://hackust2017-47009.firebaseio.com",
+    projectId: "hackust2017-47009",
+    storageBucket: "hackust2017-47009.appspot.com",
+    messagingSenderId: "786912091991"
+  };
+  firebase.initializeApp(config);
+</script>
 
 <div class="container-fluid">
     <h2>Driver En Route</h2>
