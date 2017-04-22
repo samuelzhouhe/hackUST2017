@@ -12,6 +12,7 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
 <script src="js/receiver.js"></script>
+<!--<script src="js/driver_arrive.js"></script>-->
 <script src="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.js"></script>
 
 <script src="https://www.gstatic.com/firebasejs/3.8.0/firebase.js"></script>
@@ -31,7 +32,7 @@
 
 <div class="container-fluid">
     <h2>TRANSPORTER Receiver</h2>
-    <section ng-app="senderApp" ng-controller="senderAppController">
+    <section ng-app="receiverApp" ng-controller="receiverAppController">
         <h3>Current User: {{currentUserID}}</h3>
         <input type="text" ng-model="newid" required>
         <button type="button" class="btn btn-primary" ng-click="changeCurrUser()">Login</button><br><br>
@@ -46,141 +47,18 @@
             <br><br><br>
         </div>
         <br><br>
-        <div id="hkmap" style="width: 100%; padding-top: 50%; /* 1:1 Aspect Ratio */"></div>
+        <div id="hkmap-receiver" style="width: 100%; padding-top: 50%;" ng-show="!showDriverTracking"></div>
 
-        <p>{{statusToChange}}</p>
+
+        <div class="container-fluid" ng-show="showDriverTracking">
+                <h2>Driver Arriving</h2>
+                <div id="hkmap" style="width: 100%; padding-top: 50%; /* 1:1 Aspect Ratio */"></div>
+        </div>
 
     </section>
 </div>
 
 <script>
-    var senderApp = angular.module('senderApp', ['firebase']);   //add modules in [] like 'firebase'
-    senderApp.controller('senderAppController', function ($scope, $firebaseArray, $firebaseObject) {
-
-        $scope.changeCurrUser = function () {
-            if ($scope.newid != ''){
-                $scope.currentUserID= $scope.newid;
-                $scope.newid = '';
-                $scope.loadThisReceiver($scope.currentUserID);
-            }
-        };
-
-        $scope.loadThisReceiver = function(hisid){
-            //map initialization
-            $scope.hongkongMap = L.map('hkmap').setView([22.2964, 114.1595], 11);
-            L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw', {
-                maxZoom: 18,
-                id: 'samuelhe.1c6hdkgb'
-                //accessToken: 'pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw'
-            }).addTo($scope.hongkongMap);
-            var invitationRef = firebase.database().ref().child("user/" + hisid + "/invitations");
-            $scope.myInvitations = $firebaseArray(invitationRef);
-
-            $scope.allOrdersDisplay = [];
-            $scope.allMarkers = [];
-
-            $scope.allOrders = $firebaseArray(firebase.database().ref().child("order_delivery/"));
-        };
-
-        $scope.$watch("myInvitations", function (newValue, oldValue) {
-            $scope.fetchDisplayDetails();
-        }, true);
-
-
-        //update the "allOrders", which is being displayed
-        $scope.includedOrders = [];
-        //allMarkers, allOrdersDisplay, includedOrders should be stricly in order.
-
-        $scope.fetchDisplayDetails = function(){
-            for(var i =0; i<$scope.myInvitations.length; i++){
-                var orderid = $scope.myInvitations[i].$value;
-                console.log(orderid);
-                //traverse all orders and retrieve this one
-                for (var j=0; j<$scope.allOrders.length; j++){
-                    if ($scope.allOrders[j].$id == orderid){
-                        //a matching found!
-                        if ( $scope.includedOrders.indexOf(orderid) ==-1 ){
-                            $scope.includedOrders.push(orderid);
-                            var newOrderToDisplay = $scope.allOrders[j];
-                            newOrderToDisplay.id = orderid;
-                            $scope.allOrdersDisplay.push(newOrderToDisplay);
-                            var dropoffMarker = L.marker([newOrderToDisplay.dest[1],newOrderToDisplay.dest[0]]);
-                            dropoffMarker.bindPopup("Pickup Here");
-                            $scope.allMarkers.push(dropoffMarker);
-                            $scope.hongkongMap.addLayer(dropoffMarker);
-                        }
-                    }
-                }
-            }
-        };
-
-        //callback function of pushing "view location" button on screen
-        $scope.viewPickupLocation = function (index) {
-            if ($scope.allMarkers[index].getPopup()._isopen){
-                $scope.allMarkers[index].closePopup();
-            }else{
-                $scope.allMarkers[index].openPopup();
-            }
-        };
-
-
-
-    $scope.rejectPickup = function (index){
-        var rejectid = $scope.includedOrders[index];
-        //change the status of this order
-        for (var i =0; i<$scope.allOrders.length; i++){
-            if($scope.allOrders[i].$id == rejectid){
-                $scope.statusToChange = $firebaseObject(firebase.database().ref().child("order_delivery/" + rejectid + "/status"));
-                $scope.statusToChange.$loaded().then(function(){
-                    $scope.statusToChange.$value = "rejectedByReceiver";
-                    $scope.statusToChange.$save();
-                });
-            }
-        }
-        //remove this order from invitation
-        $scope.myInvitations.$remove(index);
-        //update local copies, in order to update display
-        for(var j=0; j<$scope.includedOrders.length; j++){
-            if ($scope.allOrdersDisplay[j].id == rejectid){
-                $scope.allOrdersDisplay.splice(j,1);
-                $scope.includedOrders.splice(j,1);
-            }
-        }
-        //update marker on map
-        $scope.hongkongMap.removeLayer($scope.allMarkers[index]);
-    };
-
-
-    $scope.confirmPickup = function(index){
-        var confirmid = $scope.includedOrders[index];   //id of confirmed delivery order
-        //change the status of this order
-        for (var i =0; i<$scope.allOrders.length; i++){
-            if($scope.allOrders[i].$id == confirmid){
-                $scope.statusToChange = $firebaseObject(firebase.database().ref().child("order_delivery/" + confirmid + "/status"));
-                $scope.statusToChange.$loaded().then(function(){
-                    $scope.statusToChange.$value = "confirmedByReceiver";
-                    $scope.statusToChange.$save();
-                });
-            }
-        }
-        //remove this order from invitation
-        $scope.myInvitations.$remove(index);
-        //update local copies, in order to update display
-        for(var j=0; j<$scope.includedOrders.length; j++){
-            if ($scope.allOrdersDisplay[j].id == confirmid){
-                $scope.allOrdersDisplay.splice(j,1);
-                $scope.includedOrders.splice(j,1);
-            }
-        }
-        //update marker on map
-        $scope.hongkongMap.removeLayer($scope.allMarkers[index]);
-
-    };
-
-        $scope.currentUserID = "idu3";
-        $scope.loadThisReceiver($scope.currentUserID);
-
-});
 
 </script>
 
