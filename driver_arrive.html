@@ -15,6 +15,7 @@
 <script src="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.js"></script>
 <script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/3.8.0/firebase.js"></script>
+<script src="https://use.fontawesome.com/e0824672d4.js"></script>
 <script>
   // Initialize Firebase
   var config = {
@@ -28,9 +29,12 @@
   firebase.initializeApp(config);
 </script>
 <style type="text/css">
+  .title {text-align: center; font-weight: 900; font-family: calibri;}
+  .title-sm {text-align: center; font-weight: 600;font-family: calibri;}
+  .modify-btn {width: 40%;}
   #hkmap {opacity: 0.3; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: -2;}
-  #black {opacity: 0.3; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: -1; background-color: black;}
-  h2 {text-align: center; width: 800px;}
+  /*#black {opacity: 0.3; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: -1; background-color: black;}*/
+  h2 {text-align: center;}
 </style>
 
 <div class="container-fluid">
@@ -41,9 +45,11 @@
       </div>
     </div>
     <div ng-if="b_signed == false">
-      <p>Waiting for <b><i>{{receiver.name}}</i></b> to get this package.</p>
-      <button type="button" class="btn btn-primary" ng-click="callReceiver()">Contact</button>
-      <button type="button" class="btn btn-success" ng-click="signPackage()">Signed</button>
+      <p class="title-sm">Waiting for <b><i>{{receiver.name}}</i></b> to get this package.</p>
+      <div class="btn-group btn-group-justified">
+        <a type="button" class="btn btn-primary" ng-click="callReceiver()">Contact</a>
+        <a type="button" class="btn btn-success" ng-click="signPackage()">Signed</a>
+      </div>
     </div>
 
     <div>
@@ -63,7 +69,7 @@
           <button type="button" class="btn btn-warning" ng-click="backNav()">Back to Navigation</button>
         </div>
         <div ng-if="b_other_trip == false">
-          <button type="button" class="btn btn-primary">Pick Another Customer</button>
+          <button type="button" class="btn btn-primary" ng-click="backDriver()">Pick Another Customer</button>
         </div>      
       </div>
     </div>
@@ -81,5 +87,17 @@
 <script>
 
 </script>
+
+    <footer style="background-color: white; position: absolute; bottom: 0; width: 100%; opacity: 0.9">
+            <div class="row">
+                <div class="col-lg-10 col-lg-offset-1 text-center">
+                  <hr class="small">
+                      <a href="https://github.com/samuelzhouhe/hackUST2017"><i class="fa fa-github-square fa-fw fa-3x"></i></a>
+                    
+                    
+                    <p class="text-muted" style="margin-top: 10px">Presented by <b>TRANSPORTERS</b></p>
+                </div>
+            </div>
+    </footer>
 </body>
 </html>
