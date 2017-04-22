@@ -70,8 +70,9 @@
     var senderApp = angular.module('senderApp', ['firebase']);   //add modules in [] like 'firebase'
     senderApp.controller('senderAppController', function ($scope, $firebaseArray) {
         var firebaseRef = firebase.database().ref().child("order_delivery");
+        var receiversRef = firebase.database().ref().child("user");
         $scope.deliveryOrders = $firebaseArray(firebaseRef);
-
+        $scope.allUsers = $firebaseArray(receiversRef);
 
         $scope.hongkongMap = L.map('hkmap').setView([22.2964, 114.1595], 11);
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw', {
@@ -143,19 +144,41 @@
         console.log("test");
         $scope.initiateInvitation = function () {
             console.log("new order initiated");
+            $scope.date = new Date();
             $scope.newOrder = {"pack_weight": parseFloat($scope.orderWeight),
                 "pack_size" : [parseFloat($scope.orderVolumex),parseFloat($scope.orderVolumey),parseFloat($scope.orderVolumez)],
                 "receiver" : $scope.orderReceiverID,
                 "base_price" : 50,          //TODO: CALCULATE IT
+                "total_price" : 50,
                 "source" : [$scope.sourceLng,$scope.sourceLat],
                 "dest": [$scope.destLng,$scope.destLat],
                 "driver": "",
                 "est_time" : 30,        //TODO
                 "overtime_fine" : 0,
                 "sender": $scope.orderSenderID,
-                "status" : "receiverNotConfirmed"};
+                "status" : "receiverNotConfirmed",
+                "depart_time": $scope.date.getTime(),
+                "arrive_time": $scope.date.getTime()};
 
             $scope.deliveryOrders.$add($scope.newOrder);
+
+            //index of the newly added order in the database
+            var newlyAdded = $scope.deliveryOrders.length - 1;
+
+
+            //inform the receiver by pushing to her notifications
+            console.log($scope.deliveryOrders[newlyAdded].$id);
+            for(var i=0; i<$scope.allUsers.length; i++){
+                if ($scope.allUsers[i].$id == $scope.orderReceiverID) {
+                    var herInvitationsRef = firebase.database().ref().child("user/" + $scope.orderReceiverID + "/invitations");
+                    $scope.herInvitations = $firebaseArray(herInvitationsRef);
+                    $scope.herInvitations.$loaded().then(function(){
+                       $scope.herInvitations.$add($scope.deliveryOrders[newlyAdded].$id);
+                    });
+                    break;
+                }
+            }
+
             $scope.clearAllFields();
         };
     });
