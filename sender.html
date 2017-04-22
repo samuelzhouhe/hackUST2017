@@ -11,16 +11,27 @@
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-<script src="sender.js"></script>
+<script src="js/sender.js"></script>
 <script src="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.js"></script>
 
 
 <div class="container-fluid">
-    <h2>Driver En Route and will deliver your package soon</h2>
-    <button type="button" class="btn btn-primary">Confirm</button>
+    <h2>TRANSPORTER Delivery</h2>
     <section ng-app="senderApp" ng-controller="senderAppController">
         <h3>{{helloMsg}}</h3>
         <div id="hkmap" style="width: 100%; padding-top: 50%; /* 1:1 Aspect Ratio */"></div>
+
+
+
+
+        <div class="form-group">
+            <br>
+            <label for="weight">Weight:</label><input type="text" class="form-control" id="weight">
+            <label for="volume">Volume:</label><input type="text" class="form-control" id="volume">
+            <label for="receiver">Who Will Receive it:</label><input type="text" class="form-control" id="receiver">
+            <br>
+            <button type="button" class="btn btn-primary" style="align:center">Invite</button>
+        </div>
     </section>
 </div>
 
@@ -30,7 +41,7 @@
 
 
 <script>
-    var hongkongMap = L.map('hkmap').setView([22.2964, 114.1095], 11);
+    var hongkongMap = L.map('hkmap').setView([22.2964, 114.1595], 11);
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw', {
         maxZoom: 18,
         id: 'samuelhe.1c6hdkgb'
