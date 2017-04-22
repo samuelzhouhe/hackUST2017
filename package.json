@@ -1,0 +1,25 @@
+{
+  "name": "hackusttransportation",
+  "version": "1.0.0",
+  "description": "hackathon hkust 2017 L.Zhao G.Qi S.Guo Z.He",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samuelzhouhe/hackUST2017.git"
+  },
+  "keywords": [
+    "hack"
+  ],
+  "author": "Zhou He",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/samuelzhouhe/hackUST2017/issues"
+  },
+  "homepage": "https://github.com/samuelzhouhe/hackUST2017#readme",
+  "dependencies": {
+    "materialize-css": "^0.98.2"
+  }
+}
