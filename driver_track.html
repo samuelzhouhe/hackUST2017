@@ -15,6 +15,7 @@
 <script src="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.js"></script>
 <script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/3.8.0/firebase.js"></script>
+<script src="https://use.fontawesome.com/e0824672d4.js"></script>
 <script>
   // Initialize Firebase
   var config = {
@@ -29,19 +30,40 @@
 </script>
 
 <style type="text/css">
-
+  .title {text-align: center; font-weight: 900; font-family: calibri;}
+  .title-sm {text-align: center; font-weight: 600;font-family: calibri;}
+  .arrive-btn {float: bottom; width: 100%; margin-top: 5px; bottom: 0; margin-bottom: 20px;}
 </style>
 
 <div class="container-fluid">
   <div ng-app="driverApp" ng-controller="driverTrackController">
-    <h2>Driving!</h2>
-    <button type="button" class="btn btn-danger" ng-click="stop()">Arrive!</button>
-    <div id="hkmap" style="width: 100%; padding-top: 50%; /* 1:1 Aspect Ratio */"></div>
+    <div class="row">
+      <div class="sm-col-7 md-col-7">
+        <h2 class="title">Drive Safe!</h2>
+        <h4 class="title-sm">Estimated arrival time: {{est_arrive | date:'yyyy-MM-dd HH:mm'}}</h4>
+      </div>
+      <div class="sm-col-5 md-col-5">
+        
+      </div>
+    </div>
+    <p></p>
+    <div id="hkmap" style="width: 100%; padding-top: 70%; /* 1:1 Aspect Ratio */"></div>
+    <button type="button" class="btn btn-success arrive-btn" ng-click="stop()">Arrive!</button>
   </div>
 </div>
 
 
-
+    <footer>
+            <div class="row">
+                <div class="col-lg-10 col-lg-offset-1 text-center">
+                  <hr class="small">
+                      <a href="https://github.com/samuelzhouhe/hackUST2017"><i class="fa fa-github-square fa-fw fa-3x"></i></a>
+                    
+                    
+                    <p class="text-muted" style="margin-top: 10px">Presented by <b>TRANSPORTERS</b></p>
+                </div>
+            </div>
+    </footer>
 
 </body>
 </html>

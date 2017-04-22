@@ -24,6 +24,15 @@ driverApp.controller('driverArriveController', function ($scope, $rootScope, $ti
     $scope.order["arrive_time"] = new Date(curOrder.arrive_time);
     $scope.order["depart_time"] = new Date(curOrder.depart_time);
     $scope.order["base_price"] = curOrder.base_price;
+
+    // map
+    var hongkongMap = L.map('hkmap').setView([curOrder.dest[1], curOrder.dest[0]], 15);
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw', {
+        maxZoom: 18,
+        id: 'samuelhe.1c6hdkgb'
+        //accessToken: 'pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw'
+    }).addTo(hongkongMap);
+
     var curReceiver = $firebaseObject($scope.receiver_ref.child(curOrder.receiver));
      curReceiver.$loaded().then(function(){
       $scope.receiver = {
@@ -90,6 +99,8 @@ driverApp.controller('driverTrackController', function ($scope, $rootScope, $tim
   $scope.user_ref=firebase.database().ref("driver/"+$rootScope.driver_id);
   $scope.order_ref=firebase.database().ref("order_delivery/"+$rootScope.order_id);
   $scope.receiver_ref=firebase.database().ref("user")
+
+  // map
   var hongkongMap = L.map('hkmap').setView([22.2838, 114.153], 15);
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw', {
         maxZoom: 18,
@@ -97,6 +108,9 @@ driverApp.controller('driverTrackController', function ($scope, $rootScope, $tim
         //accessToken: 'pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw'
   }).addTo(hongkongMap);
 
+  // polygon end points
+  var points = [[22.28790, 114.1500000],[22.28680, 114.1537000], [22.2854, 114.1561000],[22.2826, 114.1583000],[22.2812, 114.163000]];
+  var routeLine = L.polyline( points, {color: 'red', weight: 3, opacity: 0.5, smoothFactor: 1}).addTo(hongkongMap);
   var curUser = $firebaseObject($scope.user_ref);
   var curOrder = $firebaseObject($scope.order_ref);
   curOrder.$loaded().then(function() {
@@ -106,6 +120,7 @@ driverApp.controller('driverTrackController', function ($scope, $rootScope, $tim
     console.log(curOrder.dest[1]);
     console.log(curOrder.dest[0]);
     curOrder.depart_time = new Date().getTime();
+    $scope.est_arrive = new Date(curOrder.depart_time + curOrder.est_time * 60 * 1000);
     curOrder.$save();
   });
   curUser.$loaded().then(function(){
@@ -117,18 +132,33 @@ driverApp.controller('driverTrackController', function ($scope, $rootScope, $tim
     // dest 114.163 22.28113
     // source 114.1500 22.28790
     $scope.onTimeout = function(){
-    	if (curUser.position[1] > 22.2859 || curUser.position[1] < 22.2828) {
+
+    	points[0][0] = curUser.position[1];
+    	points[0][1] = curUser.position[0];
+    	if (curUser.position[1] <= points[1][0]) {
+    	  points.splice(0, 1);
+    	}
+    	var x_diff = points[1][0] - points[0][0];
+    	var y_diff = points[1][1] - points[0][1];
+
+    	var percent = 0.0002 / Math.sqrt(x_diff * x_diff + y_diff * y_diff);
+    	var x_move = x_diff * percent;
+    	var y_move = y_diff * percent;
+
+    	curUser.position[1] = curUser.position[1] + x_move;
+    	curUser.position[0] = curUser.position[0] + y_move;
+    	/*if (curUser.position[1] > 22.2855 || curUser.position[1] < 22.2828) {
     		curUser.position[1] = curUser.position[1] - 0.00007;
-    		curUser.position[0] = curUser.position[0] + 0.0002;
+    		curUser.position[0] = curUser.position[0] + 0.00018;
     	}
     	else {
     		curUser.position[1] = curUser.position[1] - 0.00012;
     		curUser.position[0] = curUser.position[0] + 0.0001;
-    	}
-
+    	}*/
     	curUser.$save();
     	marker.setLatLng([curUser.position[1], curUser.position[0]]).update();
-    	if (curUser.position[1] > 22.2812) {
+      routeLine.setLatLngs(points);
+    	if (curUser.position[1] > 22.2810) {
     		$scope.mytimeout = $timeout($scope.onTimeout,200);
     	}
       
