@@ -4,62 +4,185 @@
     <meta charset="UTF-8">
     <title>Sender</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.css"/>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 </head>
 
 <body>
-<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/3.8.0/firebase.js"></script>
+<script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
+<script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyA_lEsYM-vck40-A7g0wjSxVKerpLOWfZQ",
+        authDomain: "hackust2017-47009.firebaseapp.com",
+        databaseURL: "https://hackust2017-47009.firebaseio.com",
+        projectId: "hackust2017-47009",
+        storageBucket: "hackust2017-47009.appspot.com",
+        messagingSenderId: "786912091991"
+    };
+    firebase.initializeApp(config);
+</script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
 <script src="js/sender.js"></script>
+
+
 <script src="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.js"></script>
 
-<script src="https://www.gstatic.com/firebasejs/3.8.0/firebase.js"></script>
-<script>
-  // Initialize Firebase
-  var config = {
-    apiKey: "AIzaSyA_lEsYM-vck40-A7g0wjSxVKerpLOWfZQ",
-    authDomain: "hackust2017-47009.firebaseapp.com",
-    databaseURL: "https://hackust2017-47009.firebaseio.com",
-    projectId: "hackust2017-47009",
-    storageBucket: "hackust2017-47009.appspot.com",
-    messagingSenderId: "786912091991"
-  };
-  firebase.initializeApp(config);
-</script>
+
 
 <div class="container-fluid">
     <h2>TRANSPORTER Delivery</h2>
     <section ng-app="senderApp" ng-controller="senderAppController">
         <h3>{{helloMsg}}</h3>
-        <div id="hkmap" style="width: 100%; padding-top: 50%; /* 1:1 Aspect Ratio */"></div>
+        <button class="btn btn-primary" ng-click="listenPickupPoint()">Choose Pickup Location</button>
+        <button class="btn btn-primary" ng-click="listenDropoffPoint()">Choose Dropoff Location</button>
+        <button class="btn btn-primary" ng-click="clearMarkers()">Clear Markers</button>
+        <br>
+        <div id="hkmap" style="width: 90%; padding-top: 50%; /* 1:1 Aspect Ratio */"></div>
+        <div>
+            <form ng-submit="initiateInvitation()">
+                <br>
+                <label for="weight">Weight:</label><input type="number" class="form-control" id="weight" ng-model="orderWeight" required>
 
+                <p><strong>Dimensions of package</strong></p>
+                <input type="number" class="col-xs-4" id="volumex" ng-model="orderVolumex" required>
+                <input type="number" class="col-xs-4" id="volumey" ng-model="orderVolumey" required>
+                <input type="number" class="col-xs-4" id="volumez" ng-model="orderVolumez" required>
 
-
-
-        <div class="form-group">
-            <br>
-            <label for="weight">Weight:</label><input type="text" class="form-control" id="weight">
-            <label for="volume">Volume:</label><input type="text" class="form-control" id="volume">
-            <label for="receiver">Who Will Receive it:</label><input type="text" class="form-control" id="receiver">
-            <br>
-            <button type="button" class="btn btn-primary" style="align:center">Invite</button>
+                <label for="sender">Sender's ID:</label><input type="text" class="form-control" id="sender" ng-model="orderSenderID" required>
+                <label for="receiver">Who Will Receive it:</label><input type="text" class="form-control" id="receiver" ng-model="orderReceiverID" required>
+                <br>
+                <button class="btn btn-primary" style="align:center" type="submit" name="action">Invite</button>
+            </form>
+            <p>{{newOrder}}</p>
         </div>
+
+
     </section>
 </div>
 
-
-
-
-
-
 <script>
-    var hongkongMap = L.map('hkmap').setView([22.2964, 114.1595], 11);
-    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw', {
-        maxZoom: 18,
-        id: 'samuelhe.1c6hdkgb'
-        //accessToken: 'pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw'
-    }).addTo(hongkongMap);
+    var senderApp = angular.module('senderApp', ['firebase']);   //add modules in [] like 'firebase'
+    senderApp.controller('senderAppController', function ($scope, $firebaseArray) {
+        var firebaseRef = firebase.database().ref().child("order_delivery");
+        var receiversRef = firebase.database().ref().child("user");
+        $scope.deliveryOrders = $firebaseArray(firebaseRef);
+        $scope.allUsers = $firebaseArray(receiversRef);
+
+        $scope.hongkongMap = L.map('hkmap').setView([22.2964, 114.1595], 11);
+        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw', {
+            maxZoom: 18,
+            id: 'samuelhe.1c6hdkgb'
+            //accessToken: 'pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw'
+        }).addTo($scope.hongkongMap);
+
+        var sourceLocationMarker = null;
+        var destMarker = null;
+
+        var onListenPickup = function(e){
+            //alert(e.latlng);
+            $scope.sourceLng = e.latlng.lng;
+            $scope.sourceLat = e.latlng.lat;
+            sourceLocationMarker = L.marker([e.latlng.lat, e.latlng.lng], {draggable: 'true'});
+            sourceLocationMarker.on('dragend', function(event){
+                var marker = event.target;
+                var position = marker.getLatLng();
+                $scope.sourceLng = position.lng;
+                $scope.sourceLat = position.lat;
+                console.log(position);
+            });
+            $scope.hongkongMap.addLayer(sourceLocationMarker);
+            sourceLocationMarker.bindPopup("Pickup Location");
+            $scope.hongkongMap.off('click',onListenPickup);
+        };
+
+        $scope.listenPickupPoint = function () {
+            $scope.hongkongMap.on('click', onListenPickup);
+        };
+        var onListenDropoff = function(e){
+            //alert(e.latlng);
+            $scope.destLng = e.latlng.lng;
+            $scope.destLat = e.latlng.lat;
+            destMarker = L.marker([e.latlng.lat, e.latlng.lng], {draggable: 'true'});
+            destMarker.on('dragend', function(event){
+                var marker = event.target;
+                var position = marker.getLatLng();
+                $scope.destLng = position.lng;
+                $scope.destLat = position.lat;
+                console.log(position);
+            });
+            $scope.hongkongMap.addLayer(destMarker);
+            destMarker.bindPopup("Dropoff Location");
+            $scope.hongkongMap.off('click',onListenDropoff);
+        };
+
+        $scope.listenDropoffPoint = function () {
+            $scope.hongkongMap.on('click', onListenDropoff);
+        };
+
+        $scope.clearMarkers = function () {
+            $scope.hongkongMap.removeLayer(destMarker);
+            $scope.hongkongMap.removeLayer(sourceLocationMarker);
+        };
+
+
+        $scope.helloMsg = "hello sender!";
+        $scope.clearAllFields = function () {
+            $scope.orderWeight = '';
+            $scope.orderVolumex = '';
+            $scope.orderVolumey = '';
+            $scope.orderVolumez = '';
+            $scope.orderReceiverID = '';
+            $scope.orderSenderID = "";
+        };
+        $scope.clearAllFields();
+        console.log("test");
+        $scope.initiateInvitation = function () {
+            console.log("new order initiated");
+            $scope.date = new Date();
+            $scope.newOrder = {"pack_weight": parseFloat($scope.orderWeight),
+                "pack_size" : [parseFloat($scope.orderVolumex),parseFloat($scope.orderVolumey),parseFloat($scope.orderVolumez)],
+                "receiver" : $scope.orderReceiverID,
+                "base_price" : 50,          //TODO: CALCULATE IT
+                "total_price" : 50,
+                "source" : [$scope.sourceLng,$scope.sourceLat],
+                "dest": [$scope.destLng,$scope.destLat],
+                "driver": "",
+                "est_time" : 30,        //TODO
+                "overtime_fine" : 0,
+                "sender": $scope.orderSenderID,
+                "status" : "receiverNotConfirmed",
+                "depart_time": $scope.date.getTime(),
+                "arrive_time": $scope.date.getTime()};
+
+            $scope.deliveryOrders.$add($scope.newOrder);
+
+            //index of the newly added order in the database
+            var newlyAdded = $scope.deliveryOrders.length - 1;
+
+
+            //inform the receiver by pushing to her notifications
+            console.log($scope.deliveryOrders[newlyAdded].$id);
+            for(var i=0; i<$scope.allUsers.length; i++){
+                if ($scope.allUsers[i].$id == $scope.orderReceiverID) {
+                    var herInvitationsRef = firebase.database().ref().child("user/" + $scope.orderReceiverID + "/invitations");
+                    $scope.herInvitations = $firebaseArray(herInvitationsRef);
+                    $scope.herInvitations.$loaded().then(function(){
+                       $scope.herInvitations.$add($scope.deliveryOrders[newlyAdded].$id);
+                    });
+                    break;
+                }
+            }
+
+            $scope.clearAllFields();
+        };
+    });
 </script>
+
 </body>
 </html>
