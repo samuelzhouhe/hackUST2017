@@ -32,7 +32,9 @@
   .title {text-align: center; font-weight: 900; font-family: calibri;}
   .title-sm {text-align: center; font-weight: 600;font-family: calibri;}
   .modify-btn {width: 40%;}
-  #hkmap {opacity: 0.3; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: -2;}
+  #hkmap {opacity: 0.5; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: -2;}
+  .jumbotron p {font-size: 15px; padding-left: 30px;}
+  .full-btn {width: 100%;}
   /*#black {opacity: 0.3; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: -1; background-color: black;}*/
   h2 {text-align: center;}
 </style>
@@ -45,14 +47,18 @@
       </div>
     </div>
     <div ng-if="b_signed == false">
-      <p class="title-sm">Waiting for <b><i>{{receiver.name}}</i></b> to get this package.</p>
+      <p class="title-sm" style="margin-bottom: 20px">Waiting for <b><i>{{receiver.name}}</i></b> to get this package.</p>
       <div class="btn-group btn-group-justified">
         <a type="button" class="btn btn-primary" ng-click="callReceiver()">Contact</a>
         <a type="button" class="btn btn-success" ng-click="signPackage()">Signed</a>
       </div>
     </div>
+    <div ng-if="b_signed == true">
+      <p class="title-sm" style="margin-bottom: 45px">The package is delivered to <b><i>{{receiver.name}}</i></b> Successfully!</p>
+      <p></p>
+    </div>
 
-    <div>
+    <div class="jumbotron" style="background-color: rgba(255, 255,255,0.6); margin-bottom: -15px;">
       <p></p>
       <p>Departure: {{ order.depart_time | date:'yyyy-MM-dd HH:mm:ss' }}</p>
       <p>Arrival: {{ order.arrive_time | date:'yyyy-MM-dd HH:mm:ss' }}</p>
@@ -64,14 +70,17 @@
       </div>
       <div ng-if="b_signed == true">
         <p>Delivered: {{ order.deliver_time | date:'yyyy-MM-dd HH:mm:ss' }}</p>
-        <p><b>{{ order.base_price + order.overtime_price }} HKD</b> has been transferred into your account!</p>
-        <div ng-if="b_other_trip == true">
-          <button type="button" class="btn btn-warning" ng-click="backNav()">Back to Navigation</button>
+        <p><b>{{ order.base_price + order.overtime_price }} HKD</b> has been transferred into your account!</p> 
+      </div>
+    </div>
+    <div ng-if="b_signed == true">
+                      <div ng-if="b_other_trip == true">
+          <button type="button" class="btn btn-warning full-btn" ng-click="backNav()">Back to Navigation</button>
         </div>
         <div ng-if="b_other_trip == false">
-          <button type="button" class="btn btn-primary" ng-click="backDriver()">Pick Another Customer</button>
-        </div>      
-      </div>
+          <button type="button" class="btn btn-primary full-btn" ng-click="backDriver()">Pick Another Customer</button>
+        </div>   
+
     </div>
     <div id="hkmap"></div>
     <div id="black"></div>
