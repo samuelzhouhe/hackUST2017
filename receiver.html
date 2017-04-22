@@ -80,14 +80,6 @@
             $scope.allMarkers = [];
 
             $scope.allOrders = $firebaseArray(firebase.database().ref().child("order_delivery/"));
-//            $scope.allOrders.$loaded().then(function(){
-//                $scope.myInvitations.$loaded().then(function(){
-////                    $scope.fetchDisplayDetails();
-//
-//
-//
-//                });
-//            });
         };
 
         $scope.$watch("myInvitations", function (newValue, oldValue) {
@@ -135,8 +127,6 @@
 
     $scope.rejectPickup = function (index){
         var rejectid = $scope.includedOrders[index];
-        console.log("rejectid is" + rejectid);
-
         //change the status of this order
         for (var i =0; i<$scope.allOrders.length; i++){
             if($scope.allOrders[i].$id == rejectid){
@@ -149,7 +139,6 @@
         }
         //remove this order from invitation
         $scope.myInvitations.$remove(index);
-
         //update local copies, in order to update display
         for(var j=0; j<$scope.includedOrders.length; j++){
             if ($scope.allOrdersDisplay[j].id == rejectid){
@@ -157,9 +146,35 @@
                 $scope.includedOrders.splice(j,1);
             }
         }
-
         //update marker on map
         $scope.hongkongMap.removeLayer($scope.allMarkers[index]);
+    };
+
+
+    $scope.confirmPickup = function(index){
+        var confirmid = $scope.includedOrders[index];   //id of confirmed delivery order
+        //change the status of this order
+        for (var i =0; i<$scope.allOrders.length; i++){
+            if($scope.allOrders[i].$id == confirmid){
+                $scope.statusToChange = $firebaseObject(firebase.database().ref().child("order_delivery/" + confirmid + "/status"));
+                $scope.statusToChange.$loaded().then(function(){
+                    $scope.statusToChange.$value = "confirmedByReceiver";
+                    $scope.statusToChange.$save();
+                });
+            }
+        }
+        //remove this order from invitation
+        $scope.myInvitations.$remove(index);
+        //update local copies, in order to update display
+        for(var j=0; j<$scope.includedOrders.length; j++){
+            if ($scope.allOrdersDisplay[j].id == confirmid){
+                $scope.allOrdersDisplay.splice(j,1);
+                $scope.includedOrders.splice(j,1);
+            }
+        }
+        //update marker on map
+        $scope.hongkongMap.removeLayer($scope.allMarkers[index]);
+
     };
 
         $scope.currentUserID = "idu3";
