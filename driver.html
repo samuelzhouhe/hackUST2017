@@ -3,6 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>driver</title>
+    <script src="https://www.gstatic.com/firebasejs/3.8.0/firebase.js"></script>
+    	<script src='https://api.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.js'></script>
+	<link href='https://api.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.css' rel='stylesheet' />
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyBb5DKITEUj4JK5fVHI2druQNjOIkiO1lU",
+    authDomain: "hackust2017-d27cb.firebaseapp.com",
+    databaseURL: "https://hackust2017-d27cb.firebaseio.com",
+    projectId: "hackust2017-d27cb",
+    storageBucket: "hackust2017-d27cb.appspot.com",
+    messagingSenderId: "788049559726"
+  };
+  firebase.initializeApp(config);
+</script>
 </head>
 
 <body>
@@ -21,7 +36,18 @@
 <section ng-app="driverApp" ng-controller="driverAppController">
     <h3>{{helloMsg}}</h3>
 </section>
-
+<body>
+<div id='map' style='width: 400px; height: 300px;'></div>
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoiY29ldXNndW8iLCJhIjoiY2oxdDFkZDVtMDB2azJ3bXl3bW96NXc5NSJ9._AbHksZnJ0W7YB7dGEVgbg';
+var map = new mapboxgl.Map({
+container: 'map',
+style: 'mapbox://styles/mapbox/streets-v9',
+zoom:13,
+logoPosition:'top-right'
+});
+</script>
+</body>
 
 </body>
 </html>
