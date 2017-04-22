@@ -13,7 +13,7 @@
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
 <script src="js/driver_arrive.js"></script>
 <script src="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.js"></script>
-
+<script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/3.8.0/firebase.js"></script>
 <script>
   // Initialize Firebase
@@ -28,13 +28,44 @@
   firebase.initializeApp(config);
 </script>
 
+<style type="text/css">
+  #hkmap {opacity: 0.3; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: -2;}
+  #black {opacity: 0.3; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: -1; background-color: black;}
+</style>
+
 <div class="container-fluid">
-    <h2>Arrived</h2>
-    <button type="button" class="btn btn-primary">Confirm</button>
-    <section ng-app="driverApp" ng-controller="driverAppController">
-        <h3>{{helloMsg}}</h3>
-        <div id="hkmap" style="width: 100%; padding-top: 50%; /* 1:1 Aspect Ratio */"></div>
-    </section>
+  <div ng-app="driverApp" ng-controller="driverArriveController">
+    <h2>Arrived!</h2>
+    <div ng-if="b_signed == false">
+      <p>Waiting for <b><i>{{receiver.name}}</i></b> to get this package.</p>
+      <button type="button" class="btn btn-primary" ng-click="callReceiver()">Contact</button>
+      <button type="button" class="btn btn-success" ng-click="signPackage()">Signed</button>
+    </div>
+
+    <div>
+      <p></p>
+      <p>Departure: {{ order.depart_time | date:'yyyy-MM-dd HH:mm:ss' }}</p>
+      <p>Arrival: {{ order.arrive_time | date:'yyyy-MM-dd HH:mm:ss' }}</p>
+      <div ng-if="b_signed == false">
+        <p>Waiting: {{order.wait_time | secToTime | date:'mm:ss'}}</p>
+        <p>Base Price: {{ order.base_price }} HKD</p>
+        <p>Overtime Fine: {{ order.overtime_price }} HKD</p>
+        <p>Total Price: {{ order.base_price + order.overtime_price }} HKD</p>
+      </div>
+      <div ng-if="b_signed == true">
+        <p>Delivered: {{ order.deliver_time | date:'yyyy-MM-dd HH:mm:ss' }}</p>
+        <p><b>{{ order.base_price + order.overtime_price }} HKD</b> has been transferred into your account!</p>
+        <div ng-if="b_other_trip == true">
+          <button type="button" class="btn btn-warning">Back to Navigation</button>
+        </div>
+        <div ng-if="b_other_trip == false">
+          <button type="button" class="btn btn-primary">Pick Another Customer</button>
+        </div>      
+      </div>
+    </div>
+    <div id="hkmap"></div>
+    <div id="black"></div>
+  </div>
 </div>
 
 
@@ -44,7 +75,7 @@
 
 
 <script>
-    var hongkongMap = L.map('hkmap').setView([22.2964, 114.1095], 11);
+    var hongkongMap = L.map('hkmap').setView([22.2864, 114.195], 12);
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw', {
         maxZoom: 18,
         id: 'samuelhe.1c6hdkgb'
