@@ -27,15 +27,19 @@
   };
   firebase.initializeApp(config);
 </script>
-
 <style type="text/css">
   #hkmap {opacity: 0.3; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: -2;}
   #black {opacity: 0.3; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: -1; background-color: black;}
+  h2 {text-align: center; width: 800px;}
 </style>
 
 <div class="container-fluid">
   <div ng-app="driverApp" ng-controller="driverArriveController">
-    <h2>Arrived!</h2>
+    <div class="row">
+      <div class="sm-col-12 md-col-12">
+        <h2 class="title">Arrived!</h2>
+      </div>
+    </div>
     <div ng-if="b_signed == false">
       <p>Waiting for <b><i>{{receiver.name}}</i></b> to get this package.</p>
       <button type="button" class="btn btn-primary" ng-click="callReceiver()">Contact</button>
@@ -75,12 +79,7 @@
 
 
 <script>
-    var hongkongMap = L.map('hkmap').setView([22.2864, 114.195], 12);
-    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw', {
-        maxZoom: 18,
-        id: 'samuelhe.1c6hdkgb'
-        //accessToken: 'pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw'
-    }).addTo(hongkongMap);
+
 </script>
 </body>
 </html>
