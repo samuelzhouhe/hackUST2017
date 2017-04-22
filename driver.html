@@ -6,48 +6,161 @@
     <script src="https://www.gstatic.com/firebasejs/3.8.0/firebase.js"></script>
     	<script src='https://api.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.js'></script>
 	<link href='https://api.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.css' rel='stylesheet' />
-<script>
-  // Initialize Firebase
-  var config = {
-    apiKey: "AIzaSyBb5DKITEUj4JK5fVHI2druQNjOIkiO1lU",
-    authDomain: "hackust2017-d27cb.firebaseapp.com",
-    databaseURL: "https://hackust2017-d27cb.firebaseio.com",
-    projectId: "hackust2017-d27cb",
-    storageBucket: "hackust2017-d27cb.appspot.com",
-    messagingSenderId: "788049559726"
-  };
-  firebase.initializeApp(config);
-</script>
-</head>
+<script src="https://www.gstatic.com/firebasejs/3.8.0/firebase.js"></script>
 
-<body>
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
 <script src="driver.js"></script>
+<script src="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.js"></script>
+<script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyA_lEsYM-vck40-A7g0wjSxVKerpLOWfZQ",
+    authDomain: "hackust2017-47009.firebaseapp.com",
+    databaseURL: "https://hackust2017-47009.firebaseio.com",
+    projectId: "hackust2017-47009",
+    storageBucket: "hackust2017-47009.appspot.com",
+    messagingSenderId: "786912091991"
+  };
+  firebase.initializeApp(config);
+</script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.css"/>
+</head>
+
+<body ng-app="driverApp" ng-controller="driverAppController">
 
 <div class="container-fluid">
     <h2>Driver En Route</h2>
-    <button type="button" class="btn btn-primary">Confirm</button>
+    <section >
+    	<div class = "row">
+        	<div id="hkmap" class = "" style="width: 100%; padding-top: 50%; /* 1:1 Aspect Ratio */"></div>
+        </div>
+
+        <br/>
+        <div class = "row" style = "">
+        	<button type="button" class="btn btn-info btn-lg col-xs-offset-3 col-xs-6" data-toggle="modal" data-target="#myModal">Find Passenger</button>
+        </div>
+
+		<!-- Modal -->
+		<div id="myModal" class="modal fade" role="dialog">
+  			<div class="modal-dialog">
+
+    			<!-- Modal content-->
+    			<div class="modal-content">
+      				<div class="modal-header">
+        				<button type="button" class="close" data-dismiss="modal">&times;</button>
+        				<h4 class="modal-title">Find Passenger</h4>
+      				</div>
+      			
+      				<div class="modal-body">
+
+      				      				<!--passenger found-->
+      				<div class = "row" ng-hide = "noPassenger">
+      					<div class = "col-xs-offset-3 col-xs-6">
+      						<h3>{{currentPassenger.name}}</h3>
+  							<p>Location:{{currentPassenger.location.name}}</p>
+  							<p>Destination:{{currentPassenger.destination.name}}</p>
+  							<button type="button" class="btn btn-default" data-dismiss="modal" ng-click = "confirm()">Confirm</button>
+  						</div>
+      				</div>
+
+      				<div class = "row" ng-show = "noPassenger" >
+      				<div class = "col-xs-offset-3 col-xs-6">
+      					<div class = "panel panel-default" >
+      						<div class = "panel-heading">
+      							Finding Passenger...
+      						</div>
+        					<div class = "panel-body">
+        						<img src="image/giphy.gif" alt="finding passenger" class="img-rounded col-xs-offset-2 col-xs-8">
+        					</div>
+        				</div>
+      				</div>
+      				</div>
+      				</div>
+
+
+      				<div class="modal-footer">
+        				<button type="button" class="btn btn-default" data-dismiss="modal">Quit</button>
+      				</div>
+    			</div>
+
+  			</div>
+		</div>
+		<!--the end of the Modal-->
+		<br/>
+		<div ng-show = "true">
+			<div class = "row">
+			<div class = "col-xs-offset-1 col-xs-10">
+			<div class = "row list-group-item" ng-repeat = "x in unConfirmedPackages">
+  				<div class="col-xs-offset-1 col-xs-2"  >{{x.arrive_time}}</div>
+  				<div class = "col-xs-offset-6 col-xs-2">
+  					<button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal2" ng-click = "viewPackage(x)">View</button>
+  				</div>
+			</div>
+			</div>
+			</div>
+		</div>
+
+		<!-- Modal -->
+		<div id="myModal2" class="modal fade" role="dialog">
+  			<div class="modal-dialog">
+
+    			<!-- Modal content-->
+    			<div class="modal-content">
+      				<div class="modal-header">
+        				<button type="button" class="close" data-dismiss="modal">&times;</button>
+        				<h4 class="modal-title">Package Information</h4>
+      				</div>
+      			
+      				<div class="modal-body">
+      					<div class = "row">
+      						<div class = "row">
+      							<div class = "col-xs-6">
+      								<div class = "row col-xs-offset-2">
+      									Package Weight: {{currentPackage.pack_weight}}
+      								</div>
+      								<div class = "row col-xs-offset-2">
+      									Package Size:
+      									<br/>
+      									{{currentPackage.pack_size[0]}} * {{currentPackage.pack_size[1]}} * {{currentPackage.pack_size[2]}}
+      								</div>
+      							</div>
+      							<div class = "col-xs-6">
+      								<img src="image/folder.jpg" alt="the image of folder" class="img-rounded col-xs-offset-2 col-xs-8">
+      							</div>
+      						</div>
+      					</div>
+      					<div class = "row">
+      					</div>
+      					<div class = "row col-xs-offset-2">
+      						<button type="button" class="btn btn-default" data-dismiss="modal">Confirm</button>
+      					</div>
+      					
+      				<div class="modal-footer">
+        				<button type="button" class="btn btn-default" data-dismiss="modal">Quit</button>
+      				</div>
+    			</div>
+
+  			</div>
+		</div>
+		<!--the end of the Modal-->
+    </section>
 </div>
 
-
-<section ng-app="driverApp" ng-controller="driverAppController">
-    <h3>{{helloMsg}}</h3>
-</section>
+	<script>
+    	var hongkongMap = L.map('hkmap').setView([22.2800035, 114.1835205], 15);
+    	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw', {
+        	maxZoom: 18,
+        	id: 'samuelhe.1c6hdkgb'
+        	//accessToken: 'pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw'
+    	}).addTo(hongkongMap);
+	</script>
 <body>
-<div id='map' style='width: 400px; height: 300px;'></div>
-<script>
-mapboxgl.accessToken = 'pk.eyJ1IjoiY29ldXNndW8iLCJhIjoiY2oxdDFkZDVtMDB2azJ3bXl3bW96NXc5NSJ9._AbHksZnJ0W7YB7dGEVgbg';
-var map = new mapboxgl.Map({
-container: 'map',
-style: 'mapbox://styles/mapbox/streets-v9',
-zoom:13,
-logoPosition:'top-right'
-});
-</script>
-</body>
+
+
 
 </body>
 </html>
