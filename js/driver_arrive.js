@@ -5,7 +5,7 @@ driverApp.filter('secToTime', [function(){
   };
 }])
 
-driverApp.controller('driverArriveController', function ($scope, $rootScope, $timeout, $firebaseObject, $firebaseArray) {
+driverApp.controller('driverArriveController', function ($scope, $rootScope, $timeout, $firebaseObject, $firebaseArray, $window) {
   $rootScope.driver_id = "idd1";
   $rootScope.order_id = "ido1";
   $scope.b_signed = false;
@@ -74,10 +74,11 @@ driverApp.controller('driverArriveController', function ($scope, $rootScope, $ti
         } else {
         	$scope.b_other_trip = true;
         }
-        console.log(curUser.package_order);
-        console.log(curUser.passenger_order);
-        console.log($scope.b_other_trip);
     }
+  }
+
+  $scope.backNav = function(){
+  	$window.location.href = 'driver_track.html';
   }
 
 });
@@ -89,7 +90,6 @@ driverApp.controller('driverTrackController', function ($scope, $rootScope, $tim
   $scope.user_ref=firebase.database().ref("driver/"+$rootScope.driver_id);
   $scope.order_ref=firebase.database().ref("order_delivery/"+$rootScope.order_id);
   $scope.receiver_ref=firebase.database().ref("user")
-  
   var hongkongMap = L.map('hkmap').setView([22.2838, 114.153], 15);
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw', {
         maxZoom: 18,
@@ -100,7 +100,9 @@ driverApp.controller('driverTrackController', function ($scope, $rootScope, $tim
   var curUser = $firebaseObject($scope.user_ref);
   var curOrder = $firebaseObject($scope.order_ref);
   curOrder.$loaded().then(function() {
-    L.marker([curOrder.dest[1], curOrder.dest[0]]).addTo(hongkongMap).bindPopup("Destination of delivery order: <b>"+curOrder.$id.toString()+"</b>.");
+    if ($scope.running != false) {
+    	L.marker([curOrder.dest[1], curOrder.dest[0]]).addTo(hongkongMap).bindPopup("Destination of delivery order: <b>"+curOrder.$id.toString()+"</b>.");
+    }
     console.log(curOrder.dest[1]);
     console.log(curOrder.dest[0]);
     curOrder.depart_time = new Date().getTime();
@@ -127,11 +129,13 @@ driverApp.controller('driverTrackController', function ($scope, $rootScope, $tim
     	curUser.$save();
     	marker.setLatLng([curUser.position[1], curUser.position[0]]).update();
     	if (curUser.position[1] > 22.2812) {
-    		$scope.mytimeout = $timeout($scope.onTimeout,150);
+    		$scope.mytimeout = $timeout($scope.onTimeout,200);
     	}
       
     }
-    $scope.mytimeout = $timeout($scope.onTimeout,300);    
+    if ($scope.running != false) {
+      $scope.mytimeout = $timeout($scope.onTimeout,300);    
+    }
   });
   $scope.stop = function() {
   	if (confirm("Have you arrived at your destination?") == true) {
@@ -139,49 +143,9 @@ driverApp.controller('driverTrackController', function ($scope, $rootScope, $tim
   	  curOrder.arrive_time = new Date().getTime();
   	  console.log(curOrder.arrive_time);
   	  curOrder.$save();
+  	  $scope.running = false;
   	  $window.location.href = 'driver_arrive.html';
   	}
-  }
-  $scope.callReceiver = function() {
-    if (confirm("Do you want to call "+$scope.receiver.phone.toString()+"?") == true) {
-        window.alert("Calling...");
-    } else {
-        window.alert("Cancelled.");
-    }    
-  }
-
-
-
-  $scope.signPackage = function(){
-  	var curTime = $scope.order.wait_time;
-  	var curPrice = $scope.order.overtime_price;
-    if (confirm("Do you want to sign the package?") == true) {
-        $timeout.cancel(mytimeout);
-        $scope.b_signed = true;
-        curOrder.status = "arrived";
-        curOrder.total_price = curPrice + $scope.order.base_price;
-        curOrder.deliver_time = curOrder.arrive_time + curTime * 1000;
-        curOrder.$save();
-        $scope.order["deliver_time"] = new Date(curOrder.deliver_time);
-
-        // check whether there are other ongoing trips
-        
-        for (var key in curUser.package_order) {
-         	if (curUser.package_order[key] == $rootScope.order_id) {
-          	delete curUser.package_order[key];
-          }
-        }
-        curUser.$save();
-        console.log($scope.b_other_trip);
-        if ((curUser.package_order == undefined || curUser.package_order.length == 1) && curUser.passenger_order == undefined) {
-         	$scope.b_other_trip = false;
-        } else {
-        	$scope.b_other_trip = true;
-        }
-        console.log(curUser.package_order);
-        console.log(curUser.passenger_order);
-        console.log($scope.b_other_trip);
-    }
   }
 
 });
