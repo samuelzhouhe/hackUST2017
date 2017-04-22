@@ -179,7 +179,7 @@
                     "sender": $scope.orderSenderID,
                     "status" : "receiverNotConfirmed",
                     "depart_time": $scope.date.getTime(),
-                    "arrive_time": $scope.date.getTime()};
+                    "arrive_time": $scope.date.getTime() + 1800000};
 
                 $scope.deliveryOrders.$add($scope.newOrder);
 

@@ -17,6 +17,8 @@
 
 <script src="https://www.gstatic.com/firebasejs/3.8.0/firebase.js"></script>
 <script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
+<script src="http://momentjs.com/downloads/moment-with-locales.js"></script>
+
 <script>
   // Initialize Firebase
   var config = {
@@ -40,7 +42,7 @@
         <!--<p>{{allOrdersDisplay}}</p>-->
         <div ng-repeat="invi in allOrdersDisplay" class="container-fluid">
             <h4>Sender: {{invi.sender}}</h4>
-            <h4>Estimated Arrival Time: {{invi.arrive_time}}</h4>
+            <h4>Estimated Arrival Time: {{detailedTime[$index]}}</h4>
             <button class="btn btn-primary" ng-click="viewPickupLocation($index)">View Pickup Location</button>
             <button class="btn btn-primary" ng-click="confirmPickup($index)">Confirm Pickup</button>
             <button class="btn btn-primary" ng-click="rejectPickup($index)">Reject Pickup</button>
