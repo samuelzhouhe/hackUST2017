@@ -35,7 +35,7 @@
 <div class="container-fluid">
   <div ng-app="driverApp" ng-controller="driverTrackController">
     <h2>Driving!</h2>
-    
+    <button type="button" class="btn btn-danger" ng-click="stop()">Arrive!</button>
     <div id="hkmap" style="width: 100%; padding-top: 50%; /* 1:1 Aspect Ratio */"></div>
   </div>
 </div>
@@ -43,16 +43,5 @@
 
 
 
-
-
-
-<script>
-    var hongkongMap = L.map('hkmap').setView([22.2864, 114.195], 12);
-    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw', {
-        maxZoom: 18,
-        id: 'samuelhe.1c6hdkgb'
-        //accessToken: 'pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw'
-    }).addTo(hongkongMap);
-</script>
 </body>
 </html>
