@@ -13,7 +13,7 @@
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
 <script src="js/driver_arrive.js"></script>
 <script src="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.js"></script>
-
+<script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/3.8.0/firebase.js"></script>
 <script>
   // Initialize Firebase
@@ -29,12 +29,23 @@
 </script>
 
 <div class="container-fluid">
-    <h2>Arrived</h2>
-    <button type="button" class="btn btn-primary">Confirm</button>
-    <section ng-app="driverApp" ng-controller="driverAppController">
-        <h3>{{helloMsg}}</h3>
-        <div id="hkmap" style="width: 100%; padding-top: 50%; /* 1:1 Aspect Ratio */"></div>
-    </section>
+  <div ng-app="driverApp" ng-controller="driverArriveController">
+    <h2>Arrived!</h2>
+    <p>Waiting for <b><i>{{receiver.name}}</i></b> to get this package.</p>
+    <button type="button" class="btn btn-primary" ng-click="callReceiver()">Contact</button>
+    <button type="button" class="btn btn-success" ng-click="signPackage()">Signed</button>
+    <div>
+      <p></p>
+      <p>Departure: {{ order.depart_time | date:'yyyy-MM-dd HH:mm' }}</p>
+      <p>Arrival: {{ order.arrive_time | date:'yyyy-MM-dd HH:mm' }}</p>
+      <p>Waiting: {{order.wait_time | secToTime | date:'mm:ss'}}</p>
+      <p>Base Price: {{ order.base_price }} HKD</p>
+      <p>Overtime Fine: {{ order.overtime_price }} HKD</p>
+      <p>Total Price: {{ order.base_price + order.overtime_price }} HKD</p>
+    </div>
+    <h3>{{helloMsg}}</h3>
+    <div id="hkmap" style="width: 100%; padding-top: 50%; /* 1:1 Aspect Ratio */"></div>
+  </div>
 </div>
 
 
