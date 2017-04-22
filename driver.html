@@ -15,6 +15,7 @@
 <script src="js/driver.js"></script>
 <script src="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.js"></script>
 <script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
+<script src="https://use.fontawesome.com/e0824672d4.js"></script>
 <script>
   // Initialize Firebase
   var config = {
@@ -149,13 +150,25 @@
       								<img src="image/folder.jpg" alt="the image of folder" class="img-rounded col-xs-offset-2 col-xs-8">
       							</div>
       						</div>
-      					</div>
-      					<div class = "row">
+      						<br/>
 
+      						<div class = "row col-xs-offset-1">
+      							Location: Room666, G Hall4, UST
+      						</div>
+      						<div class = "row col-xs-offset-1">
+      							Destination: Room3561, Academadic Building, UST
+      						</div>
+      						<div class = "row col-xs-offset-1">
+      							Receiver: CK Tang
+      						</div>
+      						<br/>
+      						<div class = "row col-xs-offset-1">
+      							<button type="button" class="btn btn-default" data-dismiss="modal">Confirm</button>
+      						</div>
       					</div>
-      					<div class = "row col-xs-offset-1">
-      						<button type="button" class="btn btn-default" data-dismiss="modal">Confirm</button>
-      					</div>
+
+
+      					
       					<br/>
       				<div class="modal-footer">
         				<button type="button" class="btn btn-default" data-dismiss="modal">Quit</button>
@@ -165,6 +178,7 @@
   			</div>
 		</div>
 		<!--the end of the Modal-->
+
     </section>
 </div>
 
@@ -176,6 +190,17 @@
         	//accessToken: 'pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw'
     	}).addTo(hongkongMap);
 	</script>
+	    <footer>
+            <div class="row">
+                <div class="col-lg-10 col-lg-offset-1 text-center">
+                  <hr class="small">
+                      <a href="https://github.com/samuelzhouhe/hackUST2017"><i class="fa fa-github-square fa-fw fa-3x"></i></a>
+                    
+                    
+                    <p class="text-muted" style="margin-top: 10px">Presented by <b>TRANSPORTERS</b></p>
+                </div>
+            </div>
+    </footer>
 <body>
 
 
