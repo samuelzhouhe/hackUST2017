@@ -4,5 +4,5 @@
 
 var senderApp = angular.module('senderApp', []);   //add modules in [] like 'firebase'
 senderApp.controller('senderAppController', function ($scope) {
-    $scope.helloMsg = "hello receiver!";
+    $scope.helloMsg = "hello sender!";
 });

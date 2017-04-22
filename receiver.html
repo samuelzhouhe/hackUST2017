@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Sender</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.css"/>
 </head>
 
 <body>
@@ -10,18 +11,32 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-<script src="sender.js"></script>
+<script src="receiver.js"></script>
+<script src="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.js"></script>
 
 <div class="container-fluid">
     <h2>Driver En Route</h2>
     <button type="button" class="btn btn-primary">Confirm</button>
+    <section ng-app="senderApp" ng-controller="senderAppController">
+        <h3>{{helloMsg}}</h3>
+        <div id="hkmap" style="width: 100%; padding-top: 50%; /* 1:1 Aspect Ratio */"></div>
+    </section>
 </div>
 
 
-<section ng-app="senderApp" ng-controller="senderAppController">
-    <h3>{{helloMsg}}</h3>
-</section>
 
+
+
+
+
+<script>
+    var hongkongMap = L.map('hkmap').setView([22.2964, 114.1095], 11);
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw', {
+        maxZoom: 18,
+        id: 'samuelhe.1c6hdkgb'
+        //accessToken: 'pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw'
+    }).addTo(hongkongMap);
+</script>
 
 </body>
 </html>
