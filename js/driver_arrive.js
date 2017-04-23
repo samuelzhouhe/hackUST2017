@@ -1,4 +1,4 @@
-
+var driverApp = angular.module('driverApp', ["firebase"]);   //add modules in [] like 'firebase'
 driverApp.filter('secToTime', [function(){
   return function(seconds) {
   	return new Date(1970, 0, 1).setSeconds(seconds);
