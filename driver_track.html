@@ -40,7 +40,12 @@
     <div class="row">
       <div class="sm-col-7 md-col-7">
         <h2 class="title">Drive Safe!</h2>
+        <div ng-if="status == 'delivering'">
         <h4 class="title-sm">Estimated arrival time: {{est_arrive | date:'yyyy-MM-dd HH:mm'}}</h4>
+        </div>
+        <div ng-if="status == 'waiting'">
+        <h4 class="title-sm">On your way to fetch the package.</h4>
+        </div>
       </div>
       <div class="sm-col-5 md-col-5">
         
@@ -48,7 +53,12 @@
     </div>
     <p></p>
     <div id="hkmap" style="width: 100%; padding-top: 80%; /* 1:1 Aspect Ratio */"></div>
+    <div ng-if="status == 'delivering'">
     <button type="button" class="btn btn-success arrive-btn" ng-click="stop()">Arrive!</button>
+    </div>
+    <div ng-if="status == 'waiting'">
+    <button type="button" class="btn btn-success arrive-btn" ng-click="arrive()">Arrive!</button>
+    </div>
   </div>
 </div>
 
