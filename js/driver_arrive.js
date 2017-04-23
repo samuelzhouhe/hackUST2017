@@ -89,6 +89,9 @@ driverApp.controller('driverArriveController', function ($scope, $rootScope, $ti
   $scope.backNav = function(){
   	$window.location.href = 'driver_track.html';
   }
+  $scope.backDriver = function(){
+  	$window.location.href = 'driver.html';
+  }
 
 });
 
