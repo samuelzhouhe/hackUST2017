@@ -16,19 +16,7 @@
 <script src="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.js"></script>
 <script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
 <script src="https://use.fontawesome.com/e0824672d4.js"></script>
-<script>
-  // Initialize Firebase
-  var config = {
-    apiKey: "AIzaSyA_lEsYM-vck40-A7g0wjSxVKerpLOWfZQ",
-    authDomain: "hackust2017-47009.firebaseapp.com",
-    databaseURL: "https://hackust2017-47009.firebaseio.com",
-    projectId: "hackust2017-47009",
-    storageBucket: "hackust2017-47009.appspot.com",
-    messagingSenderId: "786912091991"
-  };
-  firebase.initializeApp(config);
-</script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.css"/>
 </head>
 
 <body ng-app="driverApp" ng-controller="driverAppController">
@@ -72,7 +60,7 @@
       			
       				<div class="modal-body">
 
-      				      				<!--passenger found-->
+      				 <!--passenger found-->
       				<div class = "row" ng-hide = "noPassenger">
       					<div class = "col-xs-offset-3 col-xs-6">
       						<h3>{{currentPassenger.name}}</h3>
@@ -106,13 +94,17 @@
 		</div>
 		<!--the end of the Modal-->
 		<br/>
-		<div ng-show = "true">
+
+		<div ng-show = "ConfirmPassenger">
+			<div class = "row col-xs-offset-1">
+				<h4>Available Packages:</h4>
+			</div>
 			<div class = "row">
 			<div class = "col-xs-offset-1 col-xs-10">
 			<div class = "row list-group-item" ng-repeat = "x in unConfirmedPackages">
-  				<div class="col-xs-offset-1 col-xs-2"  >{{x.arrive_time}}</div>
-  				<div class = "col-xs-offset-6 col-xs-2">
-  					<button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal2" ng-click = "viewPackage(x)">View</button>
+  				<div class="col-xs-offset-1 col-xs-5"  >Sender: {{x.sender}}</div>
+  				<div class = "col-xs-offset-3 col-xs-2">
+  					<button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal2" ng-click = "viewPackage($index)">View</button>
   				</div>
 			</div>
 			</div>
@@ -163,22 +155,87 @@
       						</div>
       						<br/>
       						<div class = "row col-xs-offset-1">
-      							<button type="button" class="btn btn-default" data-dismiss="modal">Confirm</button>
+      							<button type="button" class="btn btn-default" data-dismiss="modal" ng-click = "confirmPackage()">Confirm</button>
       						</div>
+      						 <br/>
       					</div>
-
-
-      					
-      					<br/>
-      				<div class="modal-footer">
-        				<button type="button" class="btn btn-default" data-dismiss="modal">Quit</button>
+      					<div class="modal-footer">
+        					<button type="button" class="btn btn-default" data-dismiss="modal">Quit</button>
+      					</div>
       				</div>
-    			</div>
-
+      			</div>
   			</div>
+
 		</div>
 		<!--the end of the Modal-->
+		<div ng-show = "hasConfirmedPackage">
+		<div class = "row col-xs-offset-1">
+      		<h4>Confirmed Packages:</h4>
+      	</div>
+      	<div class = "row">
+		<div class = "col-xs-offset-1 col-xs-10">
+      	<div class = "row list-group-item" ng-repeat = "(key,value) in confirmedPackages">
+      		<div class="col-xs-offset-1 col-xs-5"  >Sender: {{value.sender}}</div>
+  			<div class = "col-xs-offset-3 col-xs-2">
+  				<button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal3" ng-click = "viewConfirmedPackage(key)">View</button>
+  			</div>
+      	</div>
+      	</div>
+      	</div>
+      	</div>
+      	<!-- Modal -->
+		<div id="myModal3" class="modal fade" role="dialog">
+  			<div class="modal-dialog">
 
+    			<!-- Modal content-->
+    			<div class="modal-content">
+      				<div class="modal-header">
+        				<button type="button" class="close" data-dismiss="modal">&times;</button>
+        				<h4 class="modal-title">Package Information</h4>
+      				</div>
+      			
+      				<div class="modal-body">
+      					<div class = "row">
+      						<div class = "row">
+      							<div class = "col-xs-6">
+      								<br/>
+      								<div class = "row col-xs-offset-2">
+      									Sender: {{currentConfirmedPackage.sender}}
+      								</div>
+      								<div class = "row col-xs-offset-2">
+      									Package Weight: {{currentConfirmedPackage.pack_weight}} kg
+      								</div>
+      								<div class = "row col-xs-offset-2">
+      									Size:
+      									{{currentConfirmedPackage.pack_size[0]}} * {{currentConfirmedPackage.pack_size[1]}} * {{currentConfirmedPackage.pack_size[2]}} cm
+      								</div>
+      							</div>
+      							<div class = "col-xs-6">
+      								<img src="image/folder.jpg" alt="the image of folder" class="img-rounded col-xs-offset-2 col-xs-8">
+      							</div>
+      						</div>
+      						<br/>
+
+      						<div class = "row col-xs-offset-1">
+      							Location: Room666, G Hall4, UST
+      						</div>
+      						<div class = "row col-xs-offset-1">
+      							Destination: Room3561, Academadic Building, UST
+      						</div>
+      						<div class = "row col-xs-offset-1">
+      							Receiver: CK Tang
+      						</div>
+      						<br/>
+      						 <br/>
+      					</div>
+      					<div class="modal-footer">
+        					<button type="button" class="btn btn-default" data-dismiss="modal">Quit</button>
+      					</div>
+      				</div>
+      			</div>
+  			</div>
+
+		</div>
     </section>
 </div>
 
@@ -194,9 +251,7 @@
             <div class="row">
                 <div class="col-lg-10 col-lg-offset-1 text-center">
                   <hr class="small">
-                      <a href="https://github.com/samuelzhouhe/hackUST2017"><i class="fa fa-github-square fa-fw fa-3x"></i></a>
-                    
-                    
+                    <a href="https://github.com/samuelzhouhe/hackUST2017"><i class="fa fa-github-square fa-fw fa-3x"></i></a>
                     <p class="text-muted" style="margin-top: 10px">Presented by <b>TRANSPORTERS</b></p>
                 </div>
             </div>
