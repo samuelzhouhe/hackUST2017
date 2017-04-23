@@ -17,6 +17,8 @@
 
 <script src="https://www.gstatic.com/firebasejs/3.8.0/firebase.js"></script>
 <script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
+<script src="http://momentjs.com/downloads/moment-with-locales.js"></script>
+
 <script>
   // Initialize Firebase
   var config = {
@@ -29,6 +31,8 @@
   };
   firebase.initializeApp(config);
 </script>
+<script src="https://use.fontawesome.com/e0824672d4.js"></script>
+
 
 <div class="container-fluid">
     <h2>TRANSPORTER Receiver</h2>
@@ -40,11 +44,36 @@
         <!--<p>{{allOrdersDisplay}}</p>-->
         <div ng-repeat="invi in allOrdersDisplay" class="container-fluid">
             <h4>Sender: {{invi.sender}}</h4>
-            <h4>Estimated Arrival Time: {{invi.arrive_time}}</h4>
+            <h4>Estimated Arrival Time: {{detailedTime[$index]}}</h4>
             <button class="btn btn-primary" ng-click="viewPickupLocation($index)">View Pickup Location</button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong">
+                View Details
+            </button>
             <button class="btn btn-primary" ng-click="confirmPickup($index)">Confirm Pickup</button>
             <button class="btn btn-primary" ng-click="rejectPickup($index)">Reject Pickup</button>
             <br><br><br>
+            <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div align="center">
+                                <img src="https://avatars2.githubusercontent.com/u/14835958?v=3&s=460" style="width: 30%;border-radius: 50%;">
+                                <h5>Samuel HE</h5>
+                                <p>is sending you a package <i class="fa fa-phone" aria-hidden="true"></i>  CALL</p>
+                                <br>
+                                <p>"Hey Dave, you left your Macbook charger"</p>
+                                <h6>ETA:{{detailedTime[$index]}}</h6>
+                            </div>
+                        </div>
+                        <div align="center">
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">CANCEL</button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">ACCEPT</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <br><br>
         <div id="hkmap-receiver" style="width: 100%; padding-top: 50%;" ng-show="!showDriverTracking"></div>
@@ -55,12 +84,22 @@
                 <div id="hkmap" style="width: 100%; padding-top: 50%; /* 1:1 Aspect Ratio */"></div>
         </div>
 
+
+
+
+
+
     </section>
 </div>
 
-<script>
-
-</script>
-
+<footer>
+    <div class="row">
+        <div class="col-lg-10 col-lg-offset-1 text-center">
+            <hr class="small">
+            <a href="https://github.com/samuelzhouhe/hackUST2017"><i class="fa fa-github-square fa-fw fa-3x"></i></a>
+            <p class="text-muted" style="margin-top: 10px">Presented by <b>TRANSPORTERS</b></p>
+        </div>
+    </div>
+</footer>
 </body>
 </html>

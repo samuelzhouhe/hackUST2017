@@ -89,6 +89,9 @@ driverApp.controller('driverArriveController', function ($scope, $rootScope, $ti
   $scope.backNav = function(){
   	$window.location.href = 'driver_track.html';
   }
+  $scope.backDriver = function(){
+  	$window.location.href = 'driver.html';
+  }
 
 });
 
@@ -108,38 +111,72 @@ driverApp.controller('driverTrackController', function ($scope, $rootScope, $tim
         //accessToken: 'pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw'
   }).addTo(hongkongMap);
 
-  // polygon end points
-  var points = [[22.28790, 114.1500000],[22.28680, 114.1537000], [22.2854, 114.1561000],[22.2826, 114.1583000],[22.2812, 114.163000]];
-  var routeLine = L.polyline( points, {color: 'red', weight: 3, opacity: 0.5, smoothFactor: 1}).addTo(hongkongMap);
+
   var curUser = $firebaseObject($scope.user_ref);
   var curOrder = $firebaseObject($scope.order_ref);
+  $scope.points = [];
+  $scope.routeLine;
   curOrder.$loaded().then(function() {
-    if ($scope.running != false) {
+    $scope.status = curOrder.status;
+    console.log($scope.status);
+    if ($scope.status == "delivering") {
+  // polygon end points
+  console.log("delivering");
+  $scope.points = [[curOrder.source[1], curOrder.source[0]],[22.28680, 114.1537000], [22.2854, 114.1561000],[22.2826, 114.1583000],[curOrder.dest[1], curOrder.dest[0]]];
+  $scope.routeLine = L.polyline( $scope.points, {color: 'red', weight: 3, opacity: 0.5, smoothFactor: 1}).addTo(hongkongMap);
     	L.marker([curOrder.dest[1], curOrder.dest[0]]).addTo(hongkongMap).bindPopup("Destination of delivery order: <b>"+curOrder.$id.toString()+"</b>.");
-    }
+    
     console.log(curOrder.dest[1]);
     console.log(curOrder.dest[0]);
     curOrder.depart_time = new Date().getTime();
     $scope.est_arrive = new Date(curOrder.depart_time + curOrder.est_time * 60 * 1000);
     curOrder.$save();
-  });
+    }
+
+  
   curUser.$loaded().then(function(){
-    curUser.position[0] = 114.1500000;
-    curUser.position[1] = 22.28790;
+    curUser.position[0] = 114.14600000;
+    curUser.position[1] = 22.28890;
     curUser.$save();
+    console.log($scope.status);
+    console.log($scope.status == "waiting");
+    if ($scope.status == "waiting") {
+      console.log("waiting");
+      $scope.points = [[curUser.position[1], curUser.position[0]], [curOrder.source[1], curOrder.source[0]]];
+      $scope.routeLine = L.polyline( $scope.points, {color: 'blue', weight: 3, opacity: 0.5, smoothFactor: 1}).addTo(hongkongMap);
+      L.marker([curOrder.source[1], curOrder.source[0]]).addTo(hongkongMap).bindPopup("Source of delivery order: <b>"+curOrder.$id.toString()+"</b>.");
+    }
+
+
     var marker = L.marker([curUser.position[1], curUser.position[0]]).addTo(hongkongMap);
+
+    $scope.arrive = function(){
+      $timeout.cancel($scope.mytimeout);
+      curOrder.status = "delivering";
+      $scope.status = "delivering";
+  $scope.points = [[curOrder.source[1], curOrder.source[0]],[22.28680, 114.1537000], [22.2854, 114.1561000],[22.2826, 114.1583000],[curOrder.dest[1], curOrder.dest[0]]];
+  $scope.routeLine = L.polyline( $scope.points, {color: 'red', weight: 3, opacity: 0.5, smoothFactor: 1}).addTo(hongkongMap);
+      L.marker([curOrder.dest[1], curOrder.dest[0]]).addTo(hongkongMap).bindPopup("Destination of delivery order: <b>"+curOrder.$id.toString()+"</b>.");
+    
+    console.log(curOrder.dest[1]);
+    console.log(curOrder.dest[0]);
+    curOrder.depart_time = new Date().getTime();
+    $scope.est_arrive = new Date(curOrder.depart_time + curOrder.est_time * 60 * 1000);
+    curOrder.$save();
+    $scope.mytimeout = $timeout($scope.onTimeout,500); 
+    }
 
     // dest 114.163 22.28113
     // source 114.1500 22.28790
     $scope.onTimeout = function(){
 
-    	points[0][0] = curUser.position[1];
-    	points[0][1] = curUser.position[0];
-    	if (curUser.position[1] <= points[1][0]) {
-    	  points.splice(0, 1);
+    	$scope.points[0][0] = curUser.position[1];
+    	$scope.points[0][1] = curUser.position[0];
+    	if (curUser.position[1] <= $scope.points[1][0]) {
+    	  $scope.points.splice(0, 1);
     	}
-    	var x_diff = points[1][0] - points[0][0];
-    	var y_diff = points[1][1] - points[0][1];
+    	var x_diff = $scope.points[1][0] - $scope.points[0][0];
+    	var y_diff = $scope.points[1][1] - $scope.points[0][1];
 
     	var percent = 0.0002 / Math.sqrt(x_diff * x_diff + y_diff * y_diff);
     	var x_move = x_diff * percent;
@@ -157,15 +194,16 @@ driverApp.controller('driverTrackController', function ($scope, $rootScope, $tim
     	}*/
     	curUser.$save();
     	marker.setLatLng([curUser.position[1], curUser.position[0]]).update();
-      routeLine.setLatLngs(points);
+      $scope.routeLine.setLatLngs($scope.points);
     	if (curUser.position[1] > 22.2810) {
     		$scope.mytimeout = $timeout($scope.onTimeout,200);
     	}
       
     }
-    if ($scope.running != false) {
-      $scope.mytimeout = $timeout($scope.onTimeout,300);    
-    }
+
+      $scope.mytimeout = $timeout($scope.onTimeout,1000);    
+    
+  });
   });
   $scope.stop = function() {
   	if (confirm("Have you arrived at your destination?") == true) {

@@ -1,7 +1,6 @@
 /**
  * Created by samuelhe on 22/4/2017.
  */
-
 var receiverApp = angular.module('receiverApp', ['firebase']);   //add modules in [] like 'firebase'
 receiverApp.controller('receiverAppController', function ($scope, $rootScope, $timeout, $firebaseObject, $firebaseArray, $window) {
 
@@ -37,6 +36,9 @@ receiverApp.controller('receiverAppController', function ($scope, $rootScope, $t
 
     //update the "allOrders", which is being displayed
     $scope.includedOrders = [];
+    $scope.detailedTime = [];
+    $scope.initialLoadFinished = false;
+    $scope.showPickupDetail = false;
     //allMarkers, allOrdersDisplay, includedOrders should be stricly in order.
 
     $scope.fetchDisplayDetails = function(){
@@ -55,11 +57,20 @@ receiverApp.controller('receiverAppController', function ($scope, $rootScope, $t
                         var dropoffMarker = L.marker([newOrderToDisplay.dest[1],newOrderToDisplay.dest[0]]);
                         dropoffMarker.bindPopup("Pickup Here");
                         $scope.allMarkers.push(dropoffMarker);
+                        var date = new Date(newOrderToDisplay.arrive_time);
+                        $scope.detailedTime.push(moment(date).format('MMMM Do YYYY, h:mm:ss a'));
                         $scope.hongkongMap.addLayer(dropoffMarker);
+
                     }
                 }
             }
         }
+        $scope.initialLoadFinished = true;
+    };
+
+    $scope.viewPickupDetail = function () {
+        console.log("test")
+        $scope.showPickupDetail = ! $scope.showPickupDetail;
     };
 
     //callback function of pushing "view location" button on screen
@@ -118,6 +129,7 @@ receiverApp.controller('receiverAppController', function ($scope, $rootScope, $t
             if ($scope.allOrdersDisplay[j].id == confirmid){
                 $scope.allOrdersDisplay.splice(j,1);
                 $scope.includedOrders.splice(j,1);
+                $scope.detailedTime.splice(j,1);
             }
         }
         //update marker on map
@@ -128,6 +140,8 @@ receiverApp.controller('receiverAppController', function ($scope, $rootScope, $t
     };
 
 
+
+
     $scope.showDriver = function () {
         $scope.showDriverTracking = true;
         $rootScope.driver_id = "idd1";
@@ -135,7 +149,7 @@ receiverApp.controller('receiverAppController', function ($scope, $rootScope, $t
 
         $scope.user_ref=firebase.database().ref("driver/"+$rootScope.driver_id);
         $scope.order_ref=firebase.database().ref("order_delivery/"+$rootScope.order_id);
-        $scope.receiver_ref=firebase.database().ref("user")
+        $scope.receiver_ref=firebase.database().ref("user");
         var hongkongMap = L.map('hkmap').setView([22.2838, 114.153], 15);
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw', {
             maxZoom: 18,
