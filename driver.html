@@ -43,7 +43,7 @@
         </div>
 
         <br/>
-        <div class = "row" style = "">
+        <div class = "row" ng-hide = "ConfirmPassenger" style = "">
         	<button type="button" class="btn btn-info btn-lg col-xs-offset-3 col-xs-6" data-toggle="modal" data-target="#myModal">Find Passenger</button>
         </div>
 
@@ -62,11 +62,26 @@
 
       				 <!--passenger found-->
       				<div class = "row" ng-hide = "noPassenger">
-      					<div class = "col-xs-offset-3 col-xs-6">
-      						<h3>{{currentPassenger.name}}</h3>
-  							<p>Location:{{currentPassenger.location.name}}</p>
-  							<p>Destination:{{currentPassenger.destination.name}}</p>
-  							<button type="button" class="btn btn-default" data-dismiss="modal" ng-click = "confirm()">Confirm</button>
+      					<div class = "row">
+      						<div class = "col-xs-offset-1 col-xs-4">
+      							<h3>{{currentPassenger.name}}</h3>
+  								<p>Location:{{currentPassenger.location.name}}</p>
+  								<p>Destination:{{currentPassenger.destination.name}}</p>
+  							</div>
+  						
+  							<div class = "col-xs-offset-1 col-xs-6">
+  								<br/>
+  								<br/>
+  								<br/>
+  								<button type="button" class="btn btn-default" data-dismiss="modal" ng-click = "confirm()">Confirm</button>
+  							</div>
+  						</div>
+
+  						<br/>
+  						<div class = "row">
+  						<div class = "col-xs-offset-1 col-xs-10">
+  							<div id="hkmapmini" class = "" style="width: 100%; padding-top: 50%; /* 1:1 Aspect Ratio */"></div>
+  						</div>
   						</div>
       				</div>
 
@@ -93,6 +108,28 @@
   			</div>
 		</div>
 		<!--the end of the Modal-->
+		<br/>
+
+		<div ng-show = "ConfirmPassenger">
+			<div class = "row">
+				<div class = "col-xs-offset-1 col-xs-11">
+					<h4>Passenger Infromation:</h4>
+					<div class = "row">
+						<div class = "col-xs-offset-1 col-xs-6">
+      						<p>Name: {{currentPassenger.name}}</p>
+  							<p>Location: {{currentPassenger.location.name}}</p>
+  							<p>Destination: {{currentPassenger.destination.name}}</p>
+  						</div>
+  						<div class = "col-xs-5">
+  							<br/>
+  							<br/>
+  							<button type="button" class="btn btn-default" ng-click = "passengerArrive()">Arrive</button>
+  						</div>
+  					</div>
+  				</div>
+			</div>
+		</div>
+
 		<br/>
 
 		<div ng-show = "ConfirmPassenger">
@@ -241,6 +278,14 @@
 
 	<script>
     	var hongkongMap = L.map('hkmap').setView([22.2800035, 114.1835205], 15);
+    	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw', {
+        	maxZoom: 18,
+        	id: 'samuelhe.1c6hdkgb'
+        	//accessToken: 'pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw'
+    	}).addTo(hongkongMap);
+	</script>
+	<script>
+    	var hongkongMap = L.map('hkmapmini').setView([22.2800035, 114.1835205], 15);
     	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw', {
         	maxZoom: 18,
         	id: 'samuelhe.1c6hdkgb'

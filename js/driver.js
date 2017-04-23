@@ -78,9 +78,13 @@ driverApp.controller('driverAppController', function ($scope,$firebaseObject,$fi
         $scope.currentConfirmedPackage = packages[key]
     }
 
+    $scope.passengerArrive = function(){
+        $scope.ConfirmPassenger = false;
+    };
+
     $scope.helloMsg = "hello driver!";
     $scope.passenger = ['passenger1','passenger2','passenger3'];
     $scope.package = ['package1','package2','package3'];
-    $scope.confirmPassenger = false;
+    $scope.ConfirmPassenger = false;
 
 });
