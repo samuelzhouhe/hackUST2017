@@ -38,11 +38,20 @@
 <div class="container-fluid">
     <h2>TRANSPORTER Delivery</h2>
     <section ng-app="senderApp" ng-controller="senderAppController">
-        <h3>{{helloMsg}}</h3>
-        <button class="btn btn-primary" ng-click="listenPickupPoint()">Choose Pickup Location</button>
-        <button class="btn btn-primary" ng-click="listenDropoffPoint()">Choose Dropoff Location</button>
-        <button class="btn btn-primary" ng-click="clearMarkers()">Clear Markers</button>
-        <br>
+        <!--<h3>{{helloMsg}}</h3>-->
+        <div>
+            <div class="col-xs-4">
+                <button class="btn btn-primary" ng-click="listenPickupPoint()">Pickup</button>
+            </div>
+            <div class="col-xs-4">
+                <button class="btn btn-primary" ng-click="listenDropoffPoint()">Dropoff</button>
+            </div>
+            <div class="col-xs-4">
+                <button class="btn btn-primary" ng-click="clearMarkers()">Clear</button>
+            </div>
+        </div>
+
+        <br><br><br>
         <div id="hkmap" style="width: 90%; padding-top: 50%; /* 1:1 Aspect Ratio */"></div>
         <div>
             <form ng-submit="initiateInvitation()">
@@ -57,9 +66,8 @@
                 <label for="sender">Sender's ID:</label><input type="text" class="form-control" id="sender" ng-model="orderSenderID" required>
                 <label for="receiver">Who Will Receive it:</label><input type="text" class="form-control" id="receiver" ng-model="orderReceiverID" required>
                 <br>
-                <button class="btn btn-primary" style="align:center" type="submit" name="action">Invite</button>
+                <button class="btn btn-primary" style="offset-before: 50px" type="submit" name="action">Invite</button>
             </form>
-            <p>{{newOrder}}</p>
         </div>
 
 
@@ -81,8 +89,10 @@
             //accessToken: 'pk.eyJ1Ijoic2FtdWVsaGUiLCJhIjoiY2lzeXR3N256MGV3MzJvcGd3Z3NnZXJheSJ9.tP7vfvSMJXdSmZbweB6IOw'
         }).addTo($scope.hongkongMap);
 
-        var sourceLocationMarker = null;
+        sourceLocationMarker = null;
         var destMarker = null;
+        var sourceSelected = false;
+        var destSelected = false;
 
         var onListenPickup = function(e){
             //alert(e.latlng);
@@ -99,10 +109,13 @@
             $scope.hongkongMap.addLayer(sourceLocationMarker);
             sourceLocationMarker.bindPopup("Pickup Location");
             $scope.hongkongMap.off('click',onListenPickup);
+            sourceSelected = true;
         };
 
         $scope.listenPickupPoint = function () {
-            $scope.hongkongMap.on('click', onListenPickup);
+            if(!sourceSelected){
+                $scope.hongkongMap.on('click', onListenPickup);
+            }
         };
         var onListenDropoff = function(e){
             //alert(e.latlng);
@@ -119,15 +132,22 @@
             $scope.hongkongMap.addLayer(destMarker);
             destMarker.bindPopup("Dropoff Location");
             $scope.hongkongMap.off('click',onListenDropoff);
+            destSelected = true;
         };
 
         $scope.listenDropoffPoint = function () {
-            $scope.hongkongMap.on('click', onListenDropoff);
+            if (!destSelected){
+                $scope.hongkongMap.on('click', onListenDropoff);
+            }
         };
 
         $scope.clearMarkers = function () {
-            $scope.hongkongMap.removeLayer(destMarker);
-            $scope.hongkongMap.removeLayer(sourceLocationMarker);
+            if(destMarker!=null)
+                $scope.hongkongMap.removeLayer(destMarker);
+            if (sourceLocationMarker!=null)
+                $scope.hongkongMap.removeLayer(sourceLocationMarker);
+            sourceSelected = false;
+            destSelected = false;
         };
 
 
@@ -143,46 +163,63 @@
         $scope.clearAllFields();
         console.log("test");
         $scope.initiateInvitation = function () {
-            console.log("new order initiated");
-            $scope.date = new Date();
-            $scope.newOrder = {"pack_weight": parseFloat($scope.orderWeight),
-                "pack_size" : [parseFloat($scope.orderVolumex),parseFloat($scope.orderVolumey),parseFloat($scope.orderVolumez)],
-                "receiver" : $scope.orderReceiverID,
-                "base_price" : 50,          //TODO: CALCULATE IT
-                "total_price" : 50,
-                "source" : [$scope.sourceLng,$scope.sourceLat],
-                "dest": [$scope.destLng,$scope.destLat],
-                "driver": "",
-                "est_time" : 30,        //TODO
-                "overtime_fine" : 0,
-                "sender": $scope.orderSenderID,
-                "status" : "receiverNotConfirmed",
-                "depart_time": $scope.date.getTime(),
-                "arrive_time": $scope.date.getTime()};
+            if (sourceSelected && destSelected){
+                $scope.date = new Date();
+                $scope.newOrder = {"pack_weight": parseFloat($scope.orderWeight),
+                    "pack_size" : [parseFloat($scope.orderVolumex),parseFloat($scope.orderVolumey),parseFloat($scope.orderVolumez)],
+                    "receiver" : $scope.orderReceiverID,
+                    "base_price" : 50,          //TODO: CALCULATE IT
+                    "total_price" : 50,
+                    "source" : [$scope.sourceLng,$scope.sourceLat],
+                    "dest": [$scope.destLng,$scope.destLat],
+                    "driver": "",
+                    "est_time" : 30,        //TODO
+                    "overtime_fine" : 0,
+                    "sender": $scope.orderSenderID,
+                    "status" : "receiverNotConfirmed",
+                    "depart_time": $scope.date.getTime(),
+                    "arrive_time": $scope.date.getTime() + 1800000 };
 
-            $scope.deliveryOrders.$add($scope.newOrder);
+                $scope.deliveryOrders.$add($scope.newOrder);
 
-            //index of the newly added order in the database
-            var newlyAdded = $scope.deliveryOrders.length - 1;
+                //index of the newly added order in the database
+                var newlyAdded = $scope.deliveryOrders.length - 1;
 
 
-            //inform the receiver by pushing to her notifications
-            console.log($scope.deliveryOrders[newlyAdded].$id);
-            for(var i=0; i<$scope.allUsers.length; i++){
-                if ($scope.allUsers[i].$id == $scope.orderReceiverID) {
-                    var herInvitationsRef = firebase.database().ref().child("user/" + $scope.orderReceiverID + "/invitations");
-                    $scope.herInvitations = $firebaseArray(herInvitationsRef);
-                    $scope.herInvitations.$loaded().then(function(){
-                       $scope.herInvitations.$add($scope.deliveryOrders[newlyAdded].$id);
-                    });
-                    break;
+                //inform the receiver by pushing to her notifications
+                console.log($scope.deliveryOrders[newlyAdded].$id);
+                for(var i=0; i<$scope.allUsers.length; i++){
+                    if ($scope.allUsers[i].$id == $scope.orderReceiverID) {
+                        var herInvitationsRef = firebase.database().ref().child("user/" + $scope.orderReceiverID + "/invitations");
+                        $scope.herInvitations = $firebaseArray(herInvitationsRef);
+                        $scope.herInvitations.$loaded().then(function(){
+                            $scope.herInvitations.$add($scope.deliveryOrders[newlyAdded].$id);
+                        });
+                        break;
+                    }
                 }
+
+                $scope.clearAllFields();
+                $scope.clearMarkers();
+            }
+            else{
+                alert("Please select BOTH source and destination");
             }
 
-            $scope.clearAllFields();
         };
     });
 </script>
 
+
+<script src="https://use.fontawesome.com/e0824672d4.js"></script>
+<footer>
+    <div class="row">
+        <div class="col-lg-10 col-lg-offset-1 text-center">
+            <hr class="small">
+            <a href="https://github.com/samuelzhouhe/hackUST2017"><i class="fa fa-github-square fa-fw fa-3x"></i></a>
+            <p class="text-muted" style="margin-top: 10px">Presented by <b>TRANSPORTERS</b></p>
+        </div>
+    </div>
+</footer>
 </body>
 </html>

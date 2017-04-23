@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/samuelzhouhe/hackUST2017#readme",
   "dependencies": {
-    "materialize-css": "^0.98.2"
+    "materialize-css": "^0.98.2",
+    "moment": "^2.18.1"
   }
 }
