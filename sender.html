@@ -66,9 +66,8 @@
                 <label for="sender">Sender's ID:</label><input type="text" class="form-control" id="sender" ng-model="orderSenderID" required>
                 <label for="receiver">Who Will Receive it:</label><input type="text" class="form-control" id="receiver" ng-model="orderReceiverID" required>
                 <br>
-                <button class="btn btn-primary" style="align:center" type="submit" name="action">Invite</button>
+                <button class="btn btn-primary" style="offset-before: 50px" type="submit" name="action">Invite</button>
             </form>
-            <p>{{newOrder}}</p>
         </div>
 
 
@@ -179,7 +178,7 @@
                     "sender": $scope.orderSenderID,
                     "status" : "receiverNotConfirmed",
                     "depart_time": $scope.date.getTime(),
-                    "arrive_time": $scope.date.getTime() + 1800000};
+                    "arrive_time": $scope.date.getTime() + 1800000 };
 
                 $scope.deliveryOrders.$add($scope.newOrder);
 
@@ -211,5 +210,16 @@
     });
 </script>
 
+
+<script src="https://use.fontawesome.com/e0824672d4.js"></script>
+<footer>
+    <div class="row">
+        <div class="col-lg-10 col-lg-offset-1 text-center">
+            <hr class="small">
+            <a href="https://github.com/samuelzhouhe/hackUST2017"><i class="fa fa-github-square fa-fw fa-3x"></i></a>
+            <p class="text-muted" style="margin-top: 10px">Presented by <b>TRANSPORTERS</b></p>
+        </div>
+    </div>
+</footer>
 </body>
 </html>

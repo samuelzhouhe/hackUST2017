@@ -37,6 +37,8 @@ receiverApp.controller('receiverAppController', function ($scope, $rootScope, $t
     //update the "allOrders", which is being displayed
     $scope.includedOrders = [];
     $scope.detailedTime = [];
+    $scope.initialLoadFinished = false;
+    $scope.showPickupDetail = false;
     //allMarkers, allOrdersDisplay, includedOrders should be stricly in order.
 
     $scope.fetchDisplayDetails = function(){
@@ -58,10 +60,17 @@ receiverApp.controller('receiverAppController', function ($scope, $rootScope, $t
                         var date = new Date(newOrderToDisplay.arrive_time);
                         $scope.detailedTime.push(moment(date).format('MMMM Do YYYY, h:mm:ss a'));
                         $scope.hongkongMap.addLayer(dropoffMarker);
+
                     }
                 }
             }
         }
+        $scope.initialLoadFinished = true;
+    };
+
+    $scope.viewPickupDetail = function () {
+        console.log("test")
+        $scope.showPickupDetail = ! $scope.showPickupDetail;
     };
 
     //callback function of pushing "view location" button on screen
@@ -129,6 +138,8 @@ receiverApp.controller('receiverAppController', function ($scope, $rootScope, $t
         $scope.showDriver();
 
     };
+
+
 
 
     $scope.showDriver = function () {
